@@ -1,73 +1,46 @@
-# React + TypeScript + Vite
+# Wimpy Kid–Inspired Portfolio Template
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A playful, notebook-and-doodle styled portfolio starter built with React, TypeScript, and Vite. It takes visual cues from the handmade diary aesthetic—lined paper, stickers, scribbles, and candid copy—while leaving the story, work, and personality entirely yours.
 
-Currently, two official plugins are available:
+> This is an unofficial fan-inspired design and is not affiliated with or endorsed by *Diary of a Wimpy Kid*, its author, or its publishers.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Make it yours
 
-## React Compiler
+1. Click **Use this template** on GitHub, or fork this repository.
+2. Clone your copy and install dependencies:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+   ```bash
+   npm install
+   npm run dev
+   ```
 
-## Expanding the ESLint configuration
+3. Update [`src/data/portfolio.ts`](src/data/portfolio.ts): your name, intro, contact links, quick facts, and projects all live there.
+4. Replace the images in `public/` with your portrait, photos, badges, and `resume.pdf`. Keep the filenames, or update the matching paths in the components.
+5. Personalize the diary page in [`src/pages/AboutPage.tsx`](src/pages/AboutPage.tsx), then deploy anywhere that supports a Vite app.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Useful commands
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev      # start the local development server
+npm run build    # type-check and make a production build
+npm run lint     # run ESLint
+npm run preview  # preview the production build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## What to customize
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Place | Change |
+| --- | --- |
+| `src/data/portfolio.ts` | Identity, bio, social links, facts, projects |
+| `src/components/Skills.tsx` | Skills and proficiency |
+| `src/components/Interests.tsx` | Interests and personality |
+| `src/pages/AboutPage.tsx` | Longer diary story, photos, and hidden-page details |
+| `public/` | Resume, portrait, photos, badges, and icons |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Repository description
+
+**A customizable React portfolio template with a notebook-and-doodle, Wimpy Kid–inspired diary aesthetic.**
+
+## License
+
+Add a license that matches how you want others to use your version of this template.
