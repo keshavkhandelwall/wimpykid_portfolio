@@ -1,0 +1,56 @@
+<svg viewBox="0 0 220 280" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="rays" cx="50%" cy="0%" r="75%">
+      <stop offset="0%" stop-color="#f6c453"/>
+      <stop offset="100%" stop-color="#e8a33d"/>
+    </radialGradient>
+  </defs>
+  <rect x="4" y="4" width="212" height="272" rx="18" fill="#f3e2c7" stroke="#5a1f1f" stroke-width="5"/>
+  <rect x="14" y="14" width="192" height="252" rx="12" fill="none" stroke="#b23b3b" stroke-width="2" stroke-dasharray="4 3"/>
+
+  <clipPath id="skyClip"><rect x="18" y="18" width="184" height="130" rx="8"/></clipPath>
+  <g clip-path="url(#skyClip)">
+    <rect x="18" y="18" width="184" height="130" fill="url(#rays)"/>
+    <g stroke="#fff" stroke-width="2" opacity="0.4">
+      <line x1="110" y1="20" x2="110" y2="150"/>
+      <line x1="70" y1="20" x2="40" y2="150"/>
+      <line x1="150" y1="20" x2="180" y2="150"/>
+      <line x1="30" y1="20" x2="-10" y2="150"/>
+      <line x1="190" y1="20" x2="230" y2="150"/>
+    </g>
+    <g fill="#8a2f2f">
+      <rect x="18" y="95" width="184" height="55"/>
+      <g fill="#f3e2c7">
+        <path d="M30 150 V120 Q35 110 40 120 V150 Z"/>
+        <path d="M50 150 V115 Q55 103 60 115 V150 Z"/>
+        <path d="M70 150 V120 Q75 110 80 120 V150 Z"/>
+        <path d="M90 150 V108 Q95 94 100 108 V150 Z"/>
+        <path d="M110 150 V108 Q115 94 120 108 V150 Z"/>
+        <path d="M130 150 V120 Q135 110 140 120 V150 Z"/>
+        <path d="M150 150 V115 Q155 103 160 115 V150 Z"/>
+        <path d="M170 150 V120 Q175 110 180 120 V150 Z"/>
+      </g>
+      <circle cx="60" cy="92" r="9"/>
+      <circle cx="110" cy="86" r="10"/>
+      <circle cx="160" cy="92" r="9"/>
+    </g>
+  </g>
+
+  <text x="110" y="178" font-family="'Pacifico', cursive" font-size="30" fill="#8a2f2f" text-anchor="middle">Jaipur</text>
+  <text x="110" y="196" font-size="12" font-weight="700" fill="#5a1f1f" text-anchor="middle" letter-spacing="3" font-family="Poppins, sans-serif">GREETINGS FROM</text>
+
+  <g transform="translate(30,205)">
+    <rect x="0" y="18" width="60" height="20" rx="4" fill="#f6c453" stroke="#5a1f1f" stroke-width="2"/>
+    <rect x="10" y="4" width="34" height="18" rx="10" fill="#f6c453" stroke="#5a1f1f" stroke-width="2"/>
+    <circle cx="12" cy="40" r="6" fill="#3a1a1a"/>
+    <circle cx="48" cy="40" r="6" fill="#3a1a1a"/>
+  </g>
+
+  <g transform="translate(150,215)">
+    <path d="M0 0 L34 0 L34 22 L17 34 L0 22 Z" fill="#b23b3b" stroke="#5a1f1f" stroke-width="2"/>
+    <text x="17" y="13" font-size="7" fill="#f3e2c7" text-anchor="middle" font-weight="700" font-family="Poppins, sans-serif">PINK</text>
+    <text x="17" y="23" font-size="9" fill="#f3e2c7" text-anchor="middle" font-weight="900" font-family="Poppins, sans-serif">CITY</text>
+  </g>
+
+  <text x="110" y="262" font-size="9" font-weight="700" fill="#5a1f1f" text-anchor="middle" letter-spacing="2" font-family="Poppins, sans-serif">RAJASTHAN, INDIA</text>
+</svg>

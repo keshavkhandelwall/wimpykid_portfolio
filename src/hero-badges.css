@@ -1,0 +1,138 @@
+/* ============================================================
+   HERO BADGES — real SVG stickers positioned on top of the
+   existing .hero-grid-capsule panel (defined in index.css).
+   This file does NOT define its own panel — it only adds the
+   duct-tape corners + sticker positions on top of what's
+   already there, so it never fights .showcase-container's
+   max-width or index.css's grid styling.
+   ============================================================ */
+
+/* ============================================================
+   DUCT TAPE — two strips pinning the page's top corners down,
+   like it's physically taped onto the dark background.
+   Renamed to .badge-tape* so it never collides with index.css's
+   .tape / .tape-tl / .tape-tr (used by the polaroid).
+   ============================================================ */
+
+.badge-tape {
+  position: absolute;
+  top: -16px;
+  width: 90px;
+  height: 34px;
+  z-index: 6;
+  background:
+    repeating-linear-gradient(
+      55deg,
+      rgba(255, 255, 255, 0.08) 0px,
+      rgba(255, 255, 255, 0.08) 2px,
+      transparent 2px,
+      transparent 6px
+    ),
+    linear-gradient(180deg, #d8cfba 0%, #c7bca3 100%);
+  opacity: 0.9;
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+  /* torn/frayed short edges instead of a clean rectangle */
+  clip-path: polygon(
+    2% 0%, 6% 15%, 3% 30%, 8% 45%, 2% 60%, 7% 78%, 3% 100%,
+    97% 100%, 93% 85%, 98% 70%, 92% 55%, 98% 40%, 94% 22%, 98% 0%
+  );
+}
+
+.badge-tape-corner-tl { left: 4%;  transform: rotate(-32deg); }
+.badge-tape-corner-tr { right: 4%; transform: rotate(32deg); }
+
+/* ============================================================
+   LEFT-EDGE TAPE — horizontal strips pinning the page's flush
+   left edge down to the dark background (top / middle / bottom).
+   ============================================================ */
+
+.page-tape-side {
+  position: absolute;
+  left: -14px;
+  width: 60px;
+  height: 34px;
+  z-index: 6;
+  background:
+    repeating-linear-gradient(
+      55deg,
+      rgba(255, 255, 255, 0.08) 0px,
+      rgba(255, 255, 255, 0.08) 2px,
+      transparent 2px,
+      transparent 6px
+    ),
+    linear-gradient(180deg, #d8cfba 0%, #c7bca3 100%);
+  opacity: 0.9;
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+  clip-path: polygon(
+    2% 0%, 6% 15%, 3% 30%, 8% 45%, 2% 60%, 7% 78%, 3% 100%,
+    97% 100%, 93% 85%, 98% 70%, 92% 55%, 98% 40%, 94% 22%, 98% 0%
+  );
+}
+
+.page-tape-side-top    { top: 4%;  transform: rotate(-6deg); }
+.page-tape-side-mid    { top: 46%; transform: rotate(4deg); }
+.page-tape-side-bottom { top: 88%; transform: rotate(-5deg); }
+
+/* ============================================================
+   BADGES — real SVG stickers, sitting ON the page itself
+   (pulled inward from the edges, no overhang past the paper).
+   ============================================================ */
+
+.sticker-img {
+  position: absolute;
+  z-index: 3;
+  filter: drop-shadow(3px 10px 8px rgba(0, 0, 0, 0.45))
+          drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.3));
+  transition: transform 0.2s ease;
+  cursor: default;
+}
+
+.sticker-img:hover {
+  transform: scale(1.06) rotate(0deg) !important;
+}
+
+.sticker-bottlecap {
+  width: 140px;
+  top: 6%;
+  left: 5%;
+  transform: rotate(-10deg);
+}
+
+.sticker-postcard {
+  width: 150px;
+  top: 6%;
+  right: 5%;
+  transform: rotate(6deg);
+}
+
+.sticker-rating {
+  width: 120px;
+  bottom: 8%;
+  left: 5%;
+  transform: rotate(8deg);
+}
+
+.sticker-stamp {
+  width: 140px;
+  bottom: 8%;
+  right: 5%;
+  transform: rotate(-6deg);
+}
+
+/* ============================================================
+   RESPONSIVE — shrink and re-tuck everything on mobile
+   ============================================================ */
+
+@media (max-width: 720px) {
+  .sticker-bottlecap { width: 85px; }
+  .sticker-postcard  { width: 90px; }
+  .sticker-rating    { width: 75px; }
+  .sticker-stamp     { width: 85px; }
+
+  .badge-tape { width: 55px; height: 22px; }
+  .page-tape-side { width: 36px; height: 22px; }
+}
