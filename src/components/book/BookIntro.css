@@ -746,8 +746,15 @@
   transition: opacity 0.3s;
 }
 
+.book-intro.phase-opening .intro-book,
+.book-intro.phase-opening .intro-leaf,
+.book-intro.phase-diving .intro-leaf {
+  transition: transform 0.6s cubic-bezier(0.3, 0, 0.2, 1);
+}
+
+/* pulled in like a black hole: slow for a blink, then faster and faster with a twist */
 .book-intro.phase-diving .intro-book {
-  transition: transform 1.3s cubic-bezier(0.5, 0, 0.75, 0.6);
+  transition: transform 0.85s cubic-bezier(0.45, 0, 0.7, 0.3);
 }
 
 .book-intro.phase-diving .turn-hint { visibility: hidden; }
@@ -765,10 +772,10 @@
   z-index: 150;
   pointer-events: none;
   background: radial-gradient(circle at 50% 50%, transparent var(--iris), #111 calc(var(--iris) + 2px));
-  animation: dive-iris 1.3s cubic-bezier(0.45, 0, 0.8, 0.7) forwards;
+  animation: dive-iris 0.85s cubic-bezier(0.4, 0, 0.8, 0.5) forwards;
 }
 
 @keyframes dive-iris {
-  0%, 20% { --iris: 75vmax; }
+  0% { --iris: 75vmax; }
   100% { --iris: 0vmax; }
 }

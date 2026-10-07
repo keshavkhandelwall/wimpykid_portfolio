@@ -9,8 +9,8 @@ type Stage = 'closed' | 'acknowledgements' | 'contents';
 // what happens after the cover is clicked: the book opens, then we dive into it
 type Phase = 'idle' | 'opening' | 'diving';
 
-const OPEN_MS = 1300;
-const DIVE_MS = 1250;
+const OPEN_MS = 380;
+const DIVE_MS = 850;
 
 const FRONT = 24;
 
@@ -145,10 +145,10 @@ export default function BookIntro() {
 
   // every pose uses the same list of functions so the browser can tween between them
   const transform = phase === 'diving'
-    ? 'translateX(var(--open-x)) rotateX(0deg) rotateY(0deg) translateZ(1550px)'
+    ? 'translateX(var(--open-x)) rotateX(0deg) rotateY(0deg) rotateZ(-30deg) translateZ(1600px)'
     : isOpen
-      ? 'translateX(var(--open-x)) rotateX(10deg) rotateY(0deg) translateZ(0px)'
-      : `translateX(0px) rotateX(${4 + tilt.x}deg) rotateY(${rot + tilt.y}deg) translateZ(0px)`;
+      ? 'translateX(var(--open-x)) rotateX(10deg) rotateY(0deg) rotateZ(0deg) translateZ(0px)'
+      : `translateX(0px) rotateX(${4 + tilt.x}deg) rotateY(${rot + tilt.y}deg) rotateZ(0deg) translateZ(0px)`;
 
   const hint = isOpen
     ? (stage === 'acknowledgements' ? 'click the page to turn it' : 'pick a chapter')
