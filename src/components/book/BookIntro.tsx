@@ -52,6 +52,8 @@ export default function BookIntro() {
   const isBack = !isOpen && showsBack(rot);
 
   const open = () => {
+    // opening cuts the spin-in short, so the inside pages must show straight away
+    setArrived(true);
     // snap the angle back into one turn without animating, then open
     setMode('instant');
     setTilt({ x: 0, y: 0 });

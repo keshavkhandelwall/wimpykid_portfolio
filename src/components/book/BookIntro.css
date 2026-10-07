@@ -59,6 +59,8 @@
   animation: book-arrive 2.6s cubic-bezier(0.45, 0, 0.2, 1) backwards;
 }
 
+.intro-book:not(.stage-closed) { animation: none; }
+
 .intro-book.stage-closed {
   cursor: grab;
   touch-action: none;
