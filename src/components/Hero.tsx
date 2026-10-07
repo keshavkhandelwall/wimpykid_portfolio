@@ -1,4 +1,5 @@
 import '../hero-badges.css';
+import { Link } from 'react-router-dom';
 import { portfolio } from '../data/portfolio';
 
 export default function Hero() {
@@ -33,7 +34,7 @@ export default function Hero() {
         <p className="hero-info-text">{portfolio.intro}</p>
         <p className="hero-info-text">{portfolio.diaryIntro}</p>
         <div className="hero-info-action" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px' }}>
-          <a href="#projects" className="btn">See My Work ↓</a>
+          <Link to="/projects" className="btn">See My Work →</Link>
           <a href={portfolio.resumeUrl} target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'Caveat', cursive", fontSize: '18px', color: 'var(--white)', textDecoration: 'underline', textUnderlineOffset: '4px' }}>View my Resume</a>
         </div>
       </div>

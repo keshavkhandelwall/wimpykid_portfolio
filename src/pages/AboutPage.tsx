@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './AboutPage.css';
+import { portfolio } from '../data/portfolio';
 
 function SafeImage({ src, alt, className, style }: { src: string; alt: string; className?: string; style?: React.CSSProperties }) {
   const [loaded, setLoaded] = useState(false);
@@ -512,7 +513,7 @@ export default function AboutPage() {
       <div className="about-page-container">
         {/* NAV */}
         <nav className="about-nav">
-          <Link to="/" className="about-nav-logo">📓 My Portfolio</Link>
+          <Link to="/" className="about-nav-logo">📓 {portfolio.siteTitle}</Link>
           <Link to="/" className="about-nav-back">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path d="M12 4 L6 10 L12 16" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -578,7 +579,7 @@ export default function AboutPage() {
     <div className="about-page-container">
       {/* NAV */}
       <nav className="about-nav">
-        <Link to="/" className="about-nav-logo">📓 My Portfolio</Link>
+        <Link to="/" className="about-nav-logo">📓 {portfolio.siteTitle}</Link>
         <Link to="/" className="about-nav-back">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M12 4 L6 10 L12 16" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
