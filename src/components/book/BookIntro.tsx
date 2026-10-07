@@ -263,10 +263,10 @@ export default function BookIntro() {
               <span className="cover-ofa">of a</span>
               <span className="cover-title">Protagonist</span>
             </h1>
-            <span className="cover-subtitle">THE BUG HUNT</span>
             <span className="cover-sticker">THE<br />OFFICIAL<br />PORTFOLIO<br />OF {portfolio.name.toUpperCase()}</span>
             <div className="cover-panel">
               <img src="/keshav-ink.png" alt={`${portfolio.name}, drawn as a cartoon`} />
+              <img className="cover-postcard" src="/badges/jaipur-postcard.svg" alt={`Greetings from ${portfolio.location}`} />
             </div>
             <span className="cover-author">{portfolio.name}</span>
           </div>

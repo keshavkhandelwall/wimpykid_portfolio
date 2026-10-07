@@ -474,23 +474,13 @@
 }
 
 .cover-title {
-  font-family: 'Chewy', cursive;
+  font-family: 'Permanent Marker', cursive;
   font-size: calc(var(--w) * 0.125);
   color: var(--green);
   transform: rotate(-3deg);
   text-shadow:
     -2px -2px 0 #0a0a0a, 2px -2px 0 #0a0a0a, -2px 2px 0 #0a0a0a, 2px 2px 0 #0a0a0a,
     3px 4px 0 rgba(0, 0, 0, 0.6);
-}
-
-.cover-subtitle {
-  display: block;
-  margin-top: calc(var(--w) * 0.03);
-  font-family: 'Chewy', cursive;
-  font-size: calc(var(--w) * 0.06);
-  letter-spacing: 1px;
-  color: var(--white);
-  text-shadow: 2px 2px 0 var(--green);
 }
 
 .cover-sticker {
@@ -516,7 +506,7 @@
   position: absolute;
   left: 22%;
   right: 14%;
-  top: calc(var(--h) * 0.47);
+  top: calc(var(--h) * 0.42);
   bottom: calc(var(--h) * 0.11);
   background:
     repeating-linear-gradient(transparent 0 13px, var(--rule) 13px 14px),
@@ -525,13 +515,22 @@
   transform: rotate(-1.5deg);
 }
 
-.cover-panel img {
+.cover-panel img:not(.cover-postcard) {
   position: absolute;
   left: 50%;
   bottom: 4px;
   height: 94%;
   transform: translateX(-50%);
   mix-blend-mode: multiply;
+}
+
+.cover-postcard {
+  position: absolute;
+  left: -16%;
+  bottom: -6%;
+  width: 34%;
+  transform: rotate(-9deg);
+  filter: drop-shadow(2px 3px 2px rgba(0, 0, 0, 0.55));
 }
 
 .cover-author {
