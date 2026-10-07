@@ -373,8 +373,8 @@
 
 .stage-closed.mode-tracking:not(.shows-back) .intro-leaf-cover { transform: translateZ(calc(var(--d) / 2)) rotateY(-10deg); }
 .stage-acknowledgements .intro-leaf-cover,
-.stage-contents .intro-leaf-cover { transform: translateZ(calc(var(--d) / 2 - 4px)) rotateY(-180deg); }
-.stage-contents .intro-leaf-ack { transform: translateZ(calc(var(--d) / 2 - 2px)) rotateY(-180deg); }
+.stage-contents .intro-leaf-cover { transform: translateZ(calc(var(--d) / 2 - 4px)) rotateY(-174deg); }
+.stage-contents .intro-leaf-ack { transform: translateZ(calc(var(--d) / 2 - 2px)) rotateY(-177deg); }
 
 .leaf-face {
   position: absolute;

@@ -97,6 +97,19 @@ export default function BookIntro() {
     return () => window.removeEventListener('keydown', onKey);
   });
 
+  // the open book keeps leaning towards the pointer, so it stays a 3D object
+  useEffect(() => {
+    if (!isOpen) return;
+    const onMove = (e: PointerEvent) => {
+      const nx = e.clientX / window.innerWidth - 0.5;
+      const ny = e.clientY / window.innerHeight - 0.5;
+      setMode('tracking');
+      setTilt({ x: clamp(-ny * 12, 6), y: clamp(nx * 18, 9) });
+    };
+    window.addEventListener('pointermove', onMove);
+    return () => window.removeEventListener('pointermove', onMove);
+  }, [isOpen]);
+
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (isOpen || phase !== 'idle' || (e.target as HTMLElement).closest('a, button')) return;
     drag.current = { x: e.clientX, y: e.clientY, rot, moved: false };
@@ -140,14 +153,14 @@ export default function BookIntro() {
   };
 
   const onPointerLeave = () => {
-    if (drag.current) return;
+    if (drag.current || isOpen) return;
     setMode('idle');
     setTilt({ x: 0, y: 0 });
   };
 
   // every pose uses the same list of functions so the browser can tween between them
   const transform = isOpen
-      ? 'translateX(var(--open-x)) rotateX(10deg) rotateY(0deg) translateZ(0px)'
+      ? `translateX(var(--open-x)) rotateX(${24 + tilt.x}deg) rotateY(${-16 + tilt.y}deg) translateZ(0px)`
       : `translateX(0px) rotateX(${4 + tilt.x}deg) rotateY(${rot + tilt.y}deg) translateZ(0px)`;
 
   const hint = isOpen
