@@ -746,36 +746,9 @@
   transition: opacity 0.3s;
 }
 
-.book-intro.phase-opening .intro-book,
-.book-intro.phase-opening .intro-leaf,
-.book-intro.phase-diving .intro-leaf {
-  transition: transform 0.6s cubic-bezier(0.3, 0, 0.2, 1);
-}
+.book-intro:not(.phase-idle) .turn-hint { visibility: hidden; }
 
-/* pulled in like a black hole: slow for a blink, then faster and faster with a twist */
-.book-intro.phase-diving .intro-book {
-  transition: transform 0.85s cubic-bezier(0.45, 0, 0.7, 0.3);
-}
-
-.book-intro.phase-diving .turn-hint { visibility: hidden; }
-
-/* the book gulps the reader: an ink circle closes over the gutter as we fall in */
-@property --iris {
-  syntax: '<length-percentage>';
-  inherits: false;
-  initial-value: 75vmax;
-}
-
-.dive-iris {
-  position: fixed;
-  inset: 0;
-  z-index: 150;
-  pointer-events: none;
-  background: radial-gradient(circle at 50% 50%, transparent var(--iris), #111 calc(var(--iris) + 2px));
-  animation: dive-iris 0.85s cubic-bezier(0.4, 0, 0.8, 0.5) forwards;
-}
-
-@keyframes dive-iris {
-  0% { --iris: 75vmax; }
-  100% { --iris: 0vmax; }
+/* while the page is loading, it only shows the loading bar on its ruled lines */
+.book-intro.phase-loading .intro-leaf-ack .leaf-front > :not(.book-loader) {
+  visibility: hidden;
 }

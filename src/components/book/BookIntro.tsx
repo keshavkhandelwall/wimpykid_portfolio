@@ -3,14 +3,14 @@ import type { PointerEvent as ReactPointerEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { portfolio } from '../../data/portfolio';
 import { chapters } from '../../data/chapters';
+import BookLoader from './BookLoader';
 import './BookIntro.css';
 
 type Stage = 'closed' | 'acknowledgements' | 'contents';
-// what happens after the cover is clicked: the book opens, then we dive into it
-type Phase = 'idle' | 'opening' | 'diving';
+// what happens after the cover is clicked: the book opens, then its page shows a loading bar
+type Phase = 'idle' | 'opening' | 'loading';
 
-const OPEN_MS = 380;
-const DIVE_MS = 850;
+const OPEN_MS = 1150;
 
 const FRONT = 24;
 
@@ -70,8 +70,7 @@ export default function BookIntro() {
     setMode('idle');
     setPhase('opening');
     open();
-    window.setTimeout(() => setPhase('diving'), OPEN_MS);
-    window.setTimeout(() => navigate('/hello', { state: { fromBook: true } }), OPEN_MS + DIVE_MS);
+    window.setTimeout(() => setPhase('loading'), OPEN_MS);
   };
 
   const close = () => {
@@ -145,11 +144,9 @@ export default function BookIntro() {
   };
 
   // every pose uses the same list of functions so the browser can tween between them
-  const transform = phase === 'diving'
-    ? 'translateX(var(--open-x)) rotateX(0deg) rotateY(0deg) rotateZ(-30deg) translateZ(1600px)'
-    : isOpen
-      ? 'translateX(var(--open-x)) rotateX(10deg) rotateY(0deg) rotateZ(0deg) translateZ(0px)'
-      : `translateX(0px) rotateX(${4 + tilt.x}deg) rotateY(${rot + tilt.y}deg) rotateZ(0deg) translateZ(0px)`;
+  const transform = isOpen
+      ? 'translateX(var(--open-x)) rotateX(10deg) rotateY(0deg) translateZ(0px)'
+      : `translateX(0px) rotateX(${4 + tilt.x}deg) rotateY(${rot + tilt.y}deg) translateZ(0px)`;
 
   const hint = isOpen
     ? (stage === 'acknowledgements' ? 'click the page to turn it' : 'pick a chapter')
@@ -159,7 +156,6 @@ export default function BookIntro() {
 
   return (
     <main className={`book-intro phase-${phase}`}>
-      {phase === 'diving' && <div className="dive-iris" aria-hidden="true" />}
       <div className="book-floor-shadow" aria-hidden="true" />
       <div
         className={`intro-book stage-${stage} mode-${mode}${isBack || !arrived ? ' shows-back' : ''}`}
@@ -249,6 +245,9 @@ export default function BookIntro() {
           aria-label="Turn the page to the contents"
         >
           <div className="leaf-face leaf-front intro-page diary-page">
+            {phase === 'loading' && (
+              <BookLoader inline onDone={() => navigate('/hello', { state: { fromBook: true } })} />
+            )}
             <Heading month="ACKNOWLEDGEMENTS" day="Monday" />
             <div className="diary-text">
               <p>First of all, I&apos;d like to thank nobody, because I built this whole thing MYSELF.</p>
