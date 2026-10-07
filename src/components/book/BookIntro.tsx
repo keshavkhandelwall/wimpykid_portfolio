@@ -3,9 +3,15 @@ import type { PointerEvent as ReactPointerEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { portfolio } from '../../data/portfolio';
 import { chapters } from '../../data/chapters';
+import BookLoader from './BookLoader';
 import './BookIntro.css';
 
 type Stage = 'closed' | 'acknowledgements' | 'contents';
+// what happens after the cover is clicked: loading page, the book opens, then we dive into it
+type Phase = 'idle' | 'loading' | 'opening' | 'diving';
+
+const OPEN_MS = 1300;
+const DIVE_MS = 1250;
 
 const FRONT = 24;
 
@@ -39,6 +45,7 @@ export default function BookIntro() {
   const [mode, setMode] = useState<'idle' | 'tracking' | 'dragging' | 'instant'>('idle');
   // the arrival spin starts on the back cover, so treat it as showing the back until it ends
   const [arrived, setArrived] = useState(false);
+  const [phase, setPhase] = useState<Phase>('idle');
   const drag = useRef<{ x: number; y: number; rot: number; moved: boolean } | null>(null);
   const navigate = useNavigate();
 
@@ -57,6 +64,20 @@ export default function BookIntro() {
     }));
   };
 
+  const startJourney = () => {
+    if (phase !== 'idle') return;
+    setTilt({ x: 0, y: 0 });
+    setMode('idle');
+    setPhase('loading');
+  };
+
+  const afterLoading = () => {
+    setPhase('opening');
+    open();
+    window.setTimeout(() => setPhase('diving'), OPEN_MS);
+    window.setTimeout(() => navigate('/hello', { state: { fromBook: true } }), OPEN_MS + DIVE_MS);
+  };
+
   const close = () => {
     setStage('closed');
     setRot(FRONT);
@@ -68,7 +89,7 @@ export default function BookIntro() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight' || e.key === 'Enter') {
-        if (stage === 'closed') open();
+        if (stage === 'closed') startJourney();
         else if (stage === 'acknowledgements') setStage('contents');
       } else if (e.key === 'ArrowLeft') {
         if (stage === 'contents') setStage('acknowledgements');
@@ -80,13 +101,13 @@ export default function BookIntro() {
   });
 
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
-    if (isOpen || (e.target as HTMLElement).closest('a, button')) return;
+    if (isOpen || phase !== 'idle' || (e.target as HTMLElement).closest('a, button')) return;
     drag.current = { x: e.clientX, y: e.clientY, rot, moved: false };
     e.currentTarget.setPointerCapture(e.pointerId);
   };
 
   const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
-    if (isOpen) return;
+    if (isOpen || phase !== 'idle') return;
     const d = drag.current;
     if (d) {
       const dx = e.clientX - d.x;
@@ -117,7 +138,7 @@ export default function BookIntro() {
     } else if (showsBack(rot)) {
       flip();
     } else {
-      open();
+      startJourney();
     }
   };
 
@@ -127,9 +148,12 @@ export default function BookIntro() {
     setTilt({ x: 0, y: 0 });
   };
 
-  const transform = isOpen
-    ? 'translateX(var(--open-x)) rotateX(10deg) rotateY(0deg)'
-    : `translateX(0px) rotateX(${4 + tilt.x}deg) rotateY(${rot + tilt.y}deg)`;
+  // every pose uses the same list of functions so the browser can tween between them
+  const transform = phase === 'diving'
+    ? 'translateX(0px) rotateX(0deg) rotateY(0deg) translateZ(1650px)'
+    : isOpen
+      ? 'translateX(var(--open-x)) rotateX(10deg) rotateY(0deg) translateZ(0px)'
+      : `translateX(0px) rotateX(${4 + tilt.x}deg) rotateY(${rot + tilt.y}deg) translateZ(0px)`;
 
   const hint = isOpen
     ? (stage === 'acknowledgements' ? 'click the page to turn it' : 'pick a chapter')
@@ -138,7 +162,9 @@ export default function BookIntro() {
       : 'drag to spin it · click the cover to open';
 
   return (
-    <main className="book-intro">
+    <main className={`book-intro phase-${phase}`}>
+      {phase === 'loading' && <BookLoader onDone={afterLoading} />}
+      {phase === 'diving' && <div className="dive-flash" aria-hidden="true" />}
       <div className="book-floor-shadow" aria-hidden="true" />
       <div
         className={`intro-book stage-${stage} mode-${mode}${isBack || !arrived ? ' shows-back' : ''}`}
@@ -254,7 +280,7 @@ export default function BookIntro() {
         {/* leaf 1: the cover on the front, the inside cover on the back */}
         <div
           className="intro-leaf intro-leaf-cover"
-          onKeyDown={(e) => e.key === ' ' && stage === 'closed' && open()}
+          onKeyDown={(e) => e.key === ' ' && stage === 'closed' && startJourney()}
           role={stage === 'closed' ? 'button' : undefined}
           tabIndex={stage === 'closed' && !isBack ? 0 : -1}
           aria-label={`Open the diary of ${portfolio.name}`}
@@ -293,8 +319,8 @@ export default function BookIntro() {
           <button type="button" onClick={close}>✕ close the book</button>
         )}
       </div>
-      <button type="button" className="intro-skip" onClick={() => (stage === 'contents' ? navigate('/hello') : setStage('contents'))}>
-        {stage === 'contents' ? 'just show me everything →' : 'skip intro →'}
+      <button type="button" className="intro-skip" onClick={() => navigate('/hello')}>
+        skip intro →
       </button>
     </main>
   );

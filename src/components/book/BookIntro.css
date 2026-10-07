@@ -736,3 +736,33 @@
 .intro-book.stage-closed.shows-back .intro-leaf-cover .leaf-back {
   visibility: hidden;
 }
+
+/* ---- OPEN AND DIVE IN ---- */
+.book-intro:not(.phase-idle) .intro-hint,
+.book-intro:not(.phase-idle) .intro-actions,
+.book-intro:not(.phase-idle) .intro-skip {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.book-intro.phase-diving .intro-book {
+  transition: transform 1.25s cubic-bezier(0.55, 0, 0.85, 0.3);
+}
+
+.book-intro.phase-diving .turn-hint { visibility: hidden; }
+
+/* the page fills the screen, then everything washes to paper */
+.dive-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  pointer-events: none;
+  background: var(--white);
+  animation: dive-flash 1.25s ease-in forwards;
+}
+
+@keyframes dive-flash {
+  0%, 55% { opacity: 0; }
+  100% { opacity: 1; }
+}

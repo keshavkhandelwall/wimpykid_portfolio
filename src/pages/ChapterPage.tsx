@@ -6,7 +6,8 @@ import Footer from '../components/Footer';
 import { chapters } from '../data/chapters';
 
 export default function ChapterPage({ children }: { children: ReactNode }) {
-  const { pathname } = useLocation();
+  const { pathname, state } = useLocation();
+  const fromBook = Boolean((state as { fromBook?: boolean } | null)?.fromBook);
   const index = chapters.findIndex((chapter) => chapter.path === pathname);
   const prev = chapters[index - 1];
   const next = chapters[index + 1];
@@ -16,7 +17,8 @@ export default function ChapterPage({ children }: { children: ReactNode }) {
   }, [pathname]);
 
   return (
-    <>
+    <div className={fromBook ? 'arrived-from-book' : undefined}>
+      {fromBook && <div className="arrive-flash" aria-hidden="true" />}
       <Navbar />
       <main>{children}</main>
       <div className="chapter-nav" role="navigation" aria-label="Chapters">
@@ -25,6 +27,6 @@ export default function ChapterPage({ children }: { children: ReactNode }) {
         {next ? <Link to={next.path}>{next.title} →</Link> : <span />}
       </div>
       <Footer />
-    </>
+    </div>
   );
 }

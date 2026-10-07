@@ -1191,3 +1191,32 @@ nav ul a.active::after {
     display: none;
   }
 }
+
+/* ---- ARRIVING FROM THE BOOK ---- */
+.arrive-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  pointer-events: none;
+  background: var(--white);
+  animation: arrive-flash 0.8s ease-out forwards;
+}
+
+@keyframes arrive-flash {
+  to { opacity: 0; visibility: hidden; }
+}
+
+.arrived-from-book main {
+  animation: arrive-zoom 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes arrive-zoom {
+  from { transform: scale(1.08); filter: blur(4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrive-flash,
+  .arrived-from-book main {
+    animation-duration: 0.01s;
+  }
+}
