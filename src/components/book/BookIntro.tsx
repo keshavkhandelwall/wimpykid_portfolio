@@ -56,11 +56,12 @@ export default function BookIntro() {
     setMode('instant');
     setTilt({ x: 0, y: 0 });
     setRot((r) => normalize(r));
-    requestAnimationFrame(() => requestAnimationFrame(() => {
+    // a short timer rather than requestAnimationFrame, which can stall and make every stage land at once
+    window.setTimeout(() => {
       setMode('idle');
       setRot(0);
       setStage('acknowledgements');
-    }));
+    }, 34);
   };
 
   const startJourney = () => {
