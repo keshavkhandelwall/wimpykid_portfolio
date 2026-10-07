@@ -727,3 +727,12 @@
     animation: none !important;
   }
 }
+
+/* When the closed book shows its back, the pages inside have no solid block
+   around them and would show through beside the spine, so hide them then.
+   From the front they stay visible for the cover-lift on hover. */
+.intro-book.stage-closed.shows-back .intro-page-contents,
+.intro-book.stage-closed.shows-back .intro-leaf-ack,
+.intro-book.stage-closed.shows-back .intro-leaf-cover .leaf-back {
+  visibility: hidden;
+}

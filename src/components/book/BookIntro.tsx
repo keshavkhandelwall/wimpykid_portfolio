@@ -37,6 +37,8 @@ export default function BookIntro() {
   const [rot, setRot] = useState(FRONT);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [mode, setMode] = useState<'idle' | 'tracking' | 'dragging' | 'instant'>('idle');
+  // the arrival spin starts on the back cover, so treat it as showing the back until it ends
+  const [arrived, setArrived] = useState(false);
   const drag = useRef<{ x: number; y: number; rot: number; moved: boolean } | null>(null);
   const navigate = useNavigate();
 
@@ -139,7 +141,8 @@ export default function BookIntro() {
     <main className="book-intro">
       <div className="book-floor-shadow" aria-hidden="true" />
       <div
-        className={`intro-book stage-${stage} mode-${mode}${isBack ? ' shows-back' : ''}`}
+        className={`intro-book stage-${stage} mode-${mode}${isBack || !arrived ? ' shows-back' : ''}`}
+        onAnimationEnd={(e) => e.target === e.currentTarget && setArrived(true)}
         style={{ transform }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
