@@ -1193,17 +1193,25 @@ nav ul a.active::after {
 }
 
 /* ---- ARRIVING FROM THE BOOK ---- */
+/* the ink circle from the book opens again on the first page */
+@property --iris {
+  syntax: '<length-percentage>';
+  inherits: false;
+  initial-value: 0vmax;
+}
+
 .arrive-flash {
   position: fixed;
   inset: 0;
   z-index: 150;
   pointer-events: none;
-  background: var(--white);
-  animation: arrive-flash 0.8s ease-out forwards;
+  background: radial-gradient(circle at 50% 50%, transparent var(--iris), #111 calc(var(--iris) + 2px));
+  animation: arrive-iris 1.1s cubic-bezier(0.35, 0, 0.25, 1) 0.15s both;
 }
 
-@keyframes arrive-flash {
-  to { opacity: 0; visibility: hidden; }
+@keyframes arrive-iris {
+  from { --iris: 0vmax; }
+  to { --iris: 75vmax; visibility: hidden; }
 }
 
 .arrived-from-book main {

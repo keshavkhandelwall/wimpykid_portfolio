@@ -747,22 +747,28 @@
 }
 
 .book-intro.phase-diving .intro-book {
-  transition: transform 1.25s cubic-bezier(0.55, 0, 0.85, 0.3);
+  transition: transform 1.3s cubic-bezier(0.5, 0, 0.75, 0.6);
 }
 
 .book-intro.phase-diving .turn-hint { visibility: hidden; }
 
-/* the page fills the screen, then everything washes to paper */
-.dive-flash {
+/* the book gulps the reader: an ink circle closes over the gutter as we fall in */
+@property --iris {
+  syntax: '<length-percentage>';
+  inherits: false;
+  initial-value: 75vmax;
+}
+
+.dive-iris {
   position: fixed;
   inset: 0;
   z-index: 150;
   pointer-events: none;
-  background: var(--white);
-  animation: dive-flash 1.25s ease-in forwards;
+  background: radial-gradient(circle at 50% 50%, transparent var(--iris), #111 calc(var(--iris) + 2px));
+  animation: dive-iris 1.3s cubic-bezier(0.45, 0, 0.8, 0.7) forwards;
 }
 
-@keyframes dive-flash {
-  0%, 55% { opacity: 0; }
-  100% { opacity: 1; }
+@keyframes dive-iris {
+  0%, 20% { --iris: 75vmax; }
+  100% { --iris: 0vmax; }
 }

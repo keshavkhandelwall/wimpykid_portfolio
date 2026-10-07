@@ -145,7 +145,7 @@ export default function BookIntro() {
 
   // every pose uses the same list of functions so the browser can tween between them
   const transform = phase === 'diving'
-    ? 'translateX(0px) rotateX(0deg) rotateY(0deg) translateZ(1650px)'
+    ? 'translateX(var(--open-x)) rotateX(0deg) rotateY(0deg) translateZ(1550px)'
     : isOpen
       ? 'translateX(var(--open-x)) rotateX(10deg) rotateY(0deg) translateZ(0px)'
       : `translateX(0px) rotateX(${4 + tilt.x}deg) rotateY(${rot + tilt.y}deg) translateZ(0px)`;
@@ -158,7 +158,7 @@ export default function BookIntro() {
 
   return (
     <main className={`book-intro phase-${phase}`}>
-      {phase === 'diving' && <div className="dive-flash" aria-hidden="true" />}
+      {phase === 'diving' && <div className="dive-iris" aria-hidden="true" />}
       <div className="book-floor-shadow" aria-hidden="true" />
       <div
         className={`intro-book stage-${stage} mode-${mode}${isBack || !arrived ? ' shows-back' : ''}`}
