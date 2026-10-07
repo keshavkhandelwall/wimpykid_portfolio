@@ -1,12 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { PointerEvent as ReactPointerEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { portfolio } from '../../data/portfolio';
 import { chapters } from '../../data/chapters';
 import './BookIntro.css';
 
-type Stage = 'closed' | 'back' | 'acknowledgements' | 'contents';
+type Stage = 'closed' | 'acknowledgements' | 'contents';
 
-const order: Stage[] = ['closed', 'acknowledgements', 'contents'];
+const FRONT = 24;
+
+// fold any angle into (-180, 180]
+const normalize = (deg: number) => {
+  const n = ((deg % 360) + 360) % 360;
+  return n > 180 ? n - 360 : n;
+};
+const showsBack = (deg: number) => Math.abs(normalize(deg)) > 90;
+const clamp = (n: number, max: number) => Math.max(-max, Math.min(max, n));
 
 const blurb = [
   'Life was easier before deadlines. Or was it?',
@@ -25,34 +34,122 @@ function Heading({ month, day }: { month: string; day: string }) {
 
 export default function BookIntro() {
   const [stage, setStage] = useState<Stage>('closed');
+  const [rot, setRot] = useState(FRONT);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [mode, setMode] = useState<'idle' | 'tracking' | 'dragging' | 'instant'>('idle');
+  const drag = useRef<{ x: number; y: number; rot: number; moved: boolean } | null>(null);
   const navigate = useNavigate();
+
+  const isOpen = stage !== 'closed';
+  const isBack = !isOpen && showsBack(rot);
+
+  const open = () => {
+    // snap the angle back into one turn without animating, then open
+    setMode('instant');
+    setTilt({ x: 0, y: 0 });
+    setRot((r) => normalize(r));
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      setMode('idle');
+      setRot(0);
+      setStage('acknowledgements');
+    }));
+  };
+
+  const close = () => {
+    setStage('closed');
+    setRot(FRONT);
+  };
+
+  // turn whichever side isn't showing towards the reader
+  const flip = () => setRot((r) => (showsBack(r) ? r - normalize(r) + FRONT : r + 132));
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight' || e.key === 'Enter') {
-        setStage((s) => order[Math.min(order.indexOf(s === 'back' ? 'closed' : s) + 1, order.length - 1)]);
+        if (stage === 'closed') open();
+        else if (stage === 'acknowledgements') setStage('contents');
       } else if (e.key === 'ArrowLeft') {
-        setStage((s) => order[Math.max(order.indexOf(s === 'back' ? 'closed' : s) - 1, 0)]);
+        if (stage === 'contents') setStage('acknowledgements');
+        else if (stage === 'acknowledgements') close();
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  });
 
-  const isOpen = stage === 'acknowledgements' || stage === 'contents';
-  const hint = {
-    closed: 'click the cover to open',
-    back: 'click the cover to flip it back',
-    acknowledgements: 'click the page to turn it',
-    contents: 'pick a chapter',
-  }[stage];
+  const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (isOpen || (e.target as HTMLElement).closest('a, button')) return;
+    drag.current = { x: e.clientX, y: e.clientY, rot, moved: false };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (isOpen) return;
+    const d = drag.current;
+    if (d) {
+      const dx = e.clientX - d.x;
+      const dy = e.clientY - d.y;
+      if (!d.moved && Math.hypot(dx, dy) > 5) {
+        d.moved = true;
+        setMode('dragging');
+      }
+      if (d.moved) {
+        setRot(d.rot + dx * 0.6);
+        setTilt({ x: clamp(-dy * 0.12, 20), y: 0 });
+      }
+      return;
+    }
+    const box = e.currentTarget.getBoundingClientRect();
+    const nx = (e.clientX - box.left) / box.width - 0.5;
+    const ny = (e.clientY - box.top) / box.height - 0.5;
+    if (mode !== 'tracking') setMode('tracking');
+    setTilt({ x: clamp(-ny * 16, 10), y: clamp(nx * 22, 12) });
+  };
+
+  const onPointerUp = () => {
+    const d = drag.current;
+    drag.current = null;
+    if (!d) return;
+    if (d.moved) {
+      setMode('tracking');
+    } else if (showsBack(rot)) {
+      flip();
+    } else {
+      open();
+    }
+  };
+
+  const onPointerLeave = () => {
+    if (drag.current) return;
+    setMode('idle');
+    setTilt({ x: 0, y: 0 });
+  };
+
+  const transform = isOpen
+    ? 'translateX(var(--open-x)) rotateX(10deg) rotateY(0deg)'
+    : `translateX(0px) rotateX(${4 + tilt.x}deg) rotateY(${rot + tilt.y}deg)`;
+
+  const hint = isOpen
+    ? (stage === 'acknowledgements' ? 'click the page to turn it' : 'pick a chapter')
+    : isBack
+      ? 'drag to spin it · click to flip it back'
+      : 'drag to spin it · click the cover to open';
 
   return (
     <main className="book-intro">
       <div className="book-floor-shadow" aria-hidden="true" />
-      <div className={`intro-book stage-${stage}`}>
+      <div
+        className={`intro-book stage-${stage} mode-${mode}${isBack ? ' shows-back' : ''}`}
+        style={{ transform }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        onPointerLeave={onPointerLeave}
+      >
         {/* back cover, facing away from the reader */}
-        <div className="book-back-cover" onClick={() => stage === 'back' && setStage('closed')}>
+        <div className="book-back-cover">
+          <span className="binding-tape" aria-hidden="true" />
           <div className="back-panel">
             <img src="/keshav-ink.png" alt="" />
             <span className="back-sign">BUGS FIXED<br />5¢</span>
@@ -63,7 +160,7 @@ export default function BookIntro() {
           <ul className="back-series" aria-label="Chapters">
             {chapters.map((chapter, i) => (
               <li key={chapter.path} style={{ ['--hue' as string]: `${i * 52}deg` }}>
-                <Link to={chapter.path} tabIndex={stage === 'back' ? 0 : -1} title={chapter.title} onClick={(e) => e.stopPropagation()}>
+                <Link to={chapter.path} tabIndex={isBack ? 0 : -1} title={chapter.title}>
                   <span className="mini-diary">DIARY</span>
                   <span className="mini-title">{chapter.title}</span>
                 </Link>
@@ -91,6 +188,7 @@ export default function BookIntro() {
 
         {/* spine */}
         <div className="book-spine" aria-hidden="true">
+          <span className="spine-stitches" />
           <span className="spine-title">
             Diary <small>of a</small> <b>Protagonist</b>
           </span>
@@ -153,12 +251,13 @@ export default function BookIntro() {
         {/* leaf 1: the cover on the front, the inside cover on the back */}
         <div
           className="intro-leaf intro-leaf-cover"
-          onClick={() => stage === 'closed' && setStage('acknowledgements')}
+          onKeyDown={(e) => e.key === ' ' && stage === 'closed' && open()}
           role={stage === 'closed' ? 'button' : undefined}
-          tabIndex={stage === 'closed' ? 0 : -1}
+          tabIndex={stage === 'closed' && !isBack ? 0 : -1}
           aria-label={`Open the diary of ${portfolio.name}`}
         >
           <div className="leaf-face leaf-front intro-cover">
+            <span className="binding-tape" aria-hidden="true" />
             <h1 className="cover-heading">
               <span className="cover-diary">DIARY</span>
               <span className="cover-ofa">of a</span>
@@ -183,12 +282,12 @@ export default function BookIntro() {
       <p className="intro-hint" aria-live="polite">{hint}</p>
       <div className="intro-actions">
         {!isOpen && (
-          <button type="button" onClick={() => setStage(stage === 'back' ? 'closed' : 'back')}>
-            {stage === 'back' ? '↺ flip to the front' : '↻ flip it over'}
+          <button type="button" onClick={flip}>
+            {isBack ? '↺ flip to the front' : '↻ flip it over'}
           </button>
         )}
         {isOpen && (
-          <button type="button" onClick={() => setStage('closed')}>✕ close the book</button>
+          <button type="button" onClick={close}>✕ close the book</button>
         )}
       </div>
       <button type="button" className="intro-skip" onClick={() => (stage === 'contents' ? navigate('/hello') : setStage('contents'))}>

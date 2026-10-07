@@ -8,10 +8,16 @@
   --rule: rgba(40, 40, 40, 0.22);
   --green: #3fae4a;
   --leather:
-    radial-gradient(ellipse at 28% 18%, rgba(255, 255, 255, 0.09), transparent 55%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.5 0 0 0 -0.18'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.09' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.4 0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)' opacity='0.5'/%3E%3C/svg%3E"),
-    #181818;
+    radial-gradient(ellipse at 26% 16%, rgba(255, 255, 255, 0.1), transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(255, 255, 255, 0.05), transparent 45%),
+    radial-gradient(ellipse at 40% 90%, rgba(0, 0, 0, 0.35), transparent 50%),
+    url('/leather.jpg') 0 0 / 260px 260px,
+    #161616;
+  --tape:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.3) 0 1px, transparent 1px 3px),
+    linear-gradient(90deg, #060606, #111 55%, #1b1b1b 90%, #090909);
+  --open-x: calc(var(--w) / 2);
   --turn: 1.1s cubic-bezier(0.645, 0.045, 0.355, 1);
 
   min-height: 100vh;
@@ -47,23 +53,20 @@
   width: var(--w);
   height: var(--h);
   transform-style: preserve-3d;
-  transform: translateX(0) rotateX(4deg) rotateY(24deg);
   transition: transform var(--turn);
+  user-select: none;
+  -webkit-user-select: none;
   animation: book-arrive 2.6s cubic-bezier(0.45, 0, 0.2, 1) backwards;
 }
 
-.intro-book.stage-closed:hover {
-  transform: translateX(0) rotateX(2deg) rotateY(14deg);
+.intro-book.stage-closed {
+  cursor: grab;
+  touch-action: none;
 }
 
-.intro-book.stage-back {
-  transform: translateX(0) rotateX(4deg) rotateY(156deg);
-}
-
-.intro-book.stage-acknowledgements,
-.intro-book.stage-contents {
-  transform: translateX(calc(var(--w) / 2)) rotateX(10deg) rotateY(0deg);
-}
+.intro-book.mode-tracking { transition: transform 0.3s ease-out; }
+.intro-book.mode-dragging { transition: none; cursor: grabbing; }
+.intro-book.mode-instant { transition: none; }
 
 /* arrives showing its back, then spins round to the front
    (no opacity here: anything below 1 flattens the 3D) */
@@ -84,7 +87,7 @@
 .book-back-cover {
   position: absolute;
   inset: 0;
-  padding: calc(var(--w) * 0.06) calc(var(--w) * 0.06) calc(var(--w) * 0.05) calc(var(--w) * 0.08);
+  padding: calc(var(--w) * 0.06) calc(var(--w) * 0.12) calc(var(--w) * 0.05) calc(var(--w) * 0.06);
   transform: translateZ(calc(var(--d) / -2)) rotateY(180deg);
   border-radius: 10px 3px 3px 10px;
   background: var(--leather);
@@ -96,8 +99,6 @@
   display: flex;
   flex-direction: column;
 }
-
-.stage-back .book-back-cover { cursor: pointer; }
 
 .back-panel {
   align-self: flex-end;
@@ -179,7 +180,7 @@
 
 .back-series a:hover { transform: translateY(-3px); }
 
-.mini-diary { font-family: 'Luckiest Guy', cursive; font-size: 0.55em; letter-spacing: 1px; }
+.mini-diary { font-family: 'Chewy', cursive; font-size: 0.55em; letter-spacing: 1px; }
 .mini-title { font-size: 0.5em; line-height: 1.1; }
 
 .back-footer {
@@ -190,7 +191,7 @@
 }
 
 .back-quote { display: flex; flex-direction: column; }
-.back-quote strong { font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: 1.15em; letter-spacing: 0.5px; }
+.back-quote strong { font-family: 'Chewy', cursive; font-weight: 400; font-size: 1.15em; letter-spacing: 0.5px; }
 .back-quote span { font-style: italic; opacity: 0.85; }
 .back-quote .back-url { margin-top: 6px; font-style: normal; color: var(--green); font-size: 0.85em; }
 
@@ -219,10 +220,11 @@
   height: 100%;
   transform-origin: left center;
   transform: translateZ(calc(var(--d) / -2)) rotateY(-90deg);
-  background: var(--leather);
-  border-left: 2px dashed rgba(245, 240, 232, 0.35);
-  border-right: 2px dashed rgba(245, 240, 232, 0.35);
-  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.8);
+  background:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.3) 0 1px, transparent 1px 3px),
+    linear-gradient(90deg, #0b0b0b, #1a1a1a 50%, #0b0b0b);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.9);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -232,20 +234,29 @@
   overflow: hidden;
 }
 
+.spine-stitches {
+  position: absolute;
+  inset: 8px 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(180deg, rgba(245, 240, 232, 0.85) 0 7px, transparent 7px 15px) 3px 0 / 3px 100% no-repeat,
+    repeating-linear-gradient(180deg, rgba(245, 240, 232, 0.85) 0 7px, transparent 7px 15px) calc(100% - 3px) 0 / 3px 100% no-repeat;
+}
+
 .spine-title {
   writing-mode: vertical-rl;
-  font-family: 'Luckiest Guy', cursive;
+  font-family: 'Chewy', cursive;
   font-size: calc(var(--d) * 0.42);
   letter-spacing: 1px;
   white-space: nowrap;
 }
 
-.spine-title small { font-family: 'Caveat', cursive; font-size: 0.8em; }
+.spine-title small { font-family: 'Gochi Hand', cursive; font-size: 0.8em; }
 .spine-title b { font-weight: 400; color: var(--green); }
 
 .spine-author {
   writing-mode: vertical-rl;
-  font-family: 'Caveat', cursive;
+  font-family: 'Gochi Hand', cursive;
   font-size: calc(var(--d) * 0.45);
   margin-top: auto;
   margin-bottom: 10px;
@@ -258,7 +269,7 @@
   place-items: center;
   background: var(--green);
   color: var(--black);
-  font-family: 'Luckiest Guy', cursive;
+  font-family: 'Chewy', cursive;
   font-size: calc(var(--d) * 0.36);
 }
 
@@ -354,11 +365,11 @@
   transition: transform var(--turn);
 }
 
-.intro-leaf-cover { transform: translateZ(calc(var(--d) / 2)); cursor: pointer; }
+.intro-leaf-cover { transform: translateZ(calc(var(--d) / 2)); }
 .intro-leaf-ack { transform: translateZ(calc(var(--d) / 2 - 2px)); }
 .stage-acknowledgements .intro-leaf-ack { cursor: pointer; }
 
-.stage-closed:hover .intro-leaf-cover { transform: translateZ(calc(var(--d) / 2)) rotateY(-12deg); }
+.stage-closed.mode-tracking:not(.shows-back) .intro-leaf-cover { transform: translateZ(calc(var(--d) / 2)) rotateY(-10deg); }
 .stage-acknowledgements .intro-leaf-cover,
 .stage-contents .intro-leaf-cover { transform: translateZ(calc(var(--d) / 2 - 4px)) rotateY(-180deg); }
 .stage-contents .intro-leaf-ack { transform: translateZ(calc(var(--d) / 2 - 2px)) rotateY(-180deg); }
@@ -398,6 +409,34 @@
 @keyframes page-shade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes page-shade-out { from { opacity: 1; } to { opacity: 0; } }
 
+/* ---- BINDING TAPE (wraps from the spine onto both covers) ---- */
+.binding-tape {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: calc(var(--w) * 0.075);
+  background: var(--tape);
+  box-shadow: 2px 0 3px rgba(0, 0, 0, 0.7), inset -1px 0 0 rgba(255, 255, 255, 0.14);
+  z-index: 3;
+}
+
+.binding-tape::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 38%;
+  width: max(3px, calc(var(--w) * 0.011));
+  background: repeating-linear-gradient(180deg, rgba(245, 240, 232, 0.88) 0 7px, transparent 7px 15px);
+}
+
+.book-back-cover .binding-tape {
+  left: auto;
+  right: 0;
+  transform: scaleX(-1);
+}
+
 /* ---- FRONT COVER ---- */
 .intro-cover {
   border-radius: 3px 10px 10px 3px;
@@ -409,6 +448,7 @@
     inset 14px 0 0 -12px rgba(255, 255, 255, 0.08);
   color: var(--white);
   text-align: center;
+  padding-left: calc(var(--w) * 0.075);
 }
 
 .cover-heading {
@@ -421,21 +461,20 @@
 }
 
 .cover-diary {
-  font-family: 'Luckiest Guy', cursive;
+  font-family: 'Gochi Hand', cursive;
   font-size: calc(var(--w) * 0.15);
   letter-spacing: calc(var(--w) * 0.012);
   color: var(--white);
 }
 
 .cover-ofa {
-  font-family: 'Caveat', cursive;
-  font-weight: 700;
+  font-family: 'Gochi Hand', cursive;
   font-size: calc(var(--w) * 0.075);
   margin: calc(var(--w) * -0.005) 0 calc(var(--w) * 0.01);
 }
 
 .cover-title {
-  font-family: 'Luckiest Guy', cursive;
+  font-family: 'Chewy', cursive;
   font-size: calc(var(--w) * 0.125);
   color: var(--green);
   transform: rotate(-3deg);
@@ -447,7 +486,7 @@
 .cover-subtitle {
   display: block;
   margin-top: calc(var(--w) * 0.03);
-  font-family: 'Luckiest Guy', cursive;
+  font-family: 'Chewy', cursive;
   font-size: calc(var(--w) * 0.06);
   letter-spacing: 1px;
   color: var(--white);
@@ -465,7 +504,7 @@
   border-radius: 50%;
   background: var(--green);
   color: var(--black);
-  font-family: 'Luckiest Guy', cursive;
+  font-family: 'Chewy', cursive;
   font-size: calc(var(--w) * 0.024);
   line-height: 1.15;
   transform: rotate(12deg);
@@ -475,8 +514,8 @@
 
 .cover-panel {
   position: absolute;
-  left: 17%;
-  right: 17%;
+  left: 22%;
+  right: 14%;
   top: calc(var(--h) * 0.47);
   bottom: calc(var(--h) * 0.11);
   background:
@@ -497,11 +536,10 @@
 
 .cover-author {
   position: absolute;
-  left: 0;
+  left: calc(var(--w) * 0.075);
   right: 0;
   bottom: calc(var(--h) * 0.025);
-  font-family: 'Caveat', cursive;
-  font-weight: 700;
+  font-family: 'Gochi Hand', cursive;
   font-size: calc(var(--w) * 0.075);
 }
 
@@ -664,10 +702,7 @@
 
 /* ---- PHONES: one page at a time ---- */
 @media (max-width: 760px) {
-  .intro-book.stage-acknowledgements,
-  .intro-book.stage-contents {
-    transform: translateX(0) rotateX(6deg) rotateY(0deg);
-  }
+  .book-intro { --open-x: 0px; }
 
   .stage-acknowledgements .intro-leaf-cover,
   .stage-contents .intro-leaf-cover,
