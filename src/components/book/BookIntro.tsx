@@ -3,12 +3,11 @@ import type { PointerEvent as ReactPointerEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { portfolio } from '../../data/portfolio';
 import { chapters } from '../../data/chapters';
-import BookLoader from './BookLoader';
 import './BookIntro.css';
 
 type Stage = 'closed' | 'acknowledgements' | 'contents';
-// what happens after the cover is clicked: loading page, the book opens, then we dive into it
-type Phase = 'idle' | 'loading' | 'opening' | 'diving';
+// what happens after the cover is clicked: the book opens, then we dive into it
+type Phase = 'idle' | 'opening' | 'diving';
 
 const OPEN_MS = 1300;
 const DIVE_MS = 1250;
@@ -68,10 +67,6 @@ export default function BookIntro() {
     if (phase !== 'idle') return;
     setTilt({ x: 0, y: 0 });
     setMode('idle');
-    setPhase('loading');
-  };
-
-  const afterLoading = () => {
     setPhase('opening');
     open();
     window.setTimeout(() => setPhase('diving'), OPEN_MS);
@@ -163,7 +158,6 @@ export default function BookIntro() {
 
   return (
     <main className={`book-intro phase-${phase}`}>
-      {phase === 'loading' && <BookLoader onDone={afterLoading} />}
       {phase === 'diving' && <div className="dive-flash" aria-hidden="true" />}
       <div className="book-floor-shadow" aria-hidden="true" />
       <div
