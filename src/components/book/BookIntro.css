@@ -1,11 +1,17 @@
 /* ---- 3D BOOK INTRO ---- */
 .book-intro {
-  --w: min(360px, 82vw);
-  --h: calc(var(--w) * 1.4);
-  --paper: #fbf7ec;
+  --w: min(360px, 80vw);
+  --h: calc(var(--w) * 1.42);
+  --d: calc(var(--w) * 0.11);
+  --paper: var(--white);
   --ink: #1d1d1d;
-  --rule: rgba(80, 140, 200, 0.28);
-  --margin: rgba(214, 69, 65, 0.55);
+  --rule: rgba(40, 40, 40, 0.22);
+  --green: #3fae4a;
+  --leather:
+    radial-gradient(ellipse at 28% 18%, rgba(255, 255, 255, 0.09), transparent 55%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.5 0 0 0 -0.18'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.09' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.4 0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)' opacity='0.5'/%3E%3C/svg%3E"),
+    #181818;
   --turn: 1.1s cubic-bezier(0.645, 0.045, 0.355, 1);
 
   min-height: 100vh;
@@ -14,13 +20,26 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 36px;
-  padding: 40px 16px;
+  gap: 28px;
+  padding: 56px 16px 40px;
   overflow: hidden;
   perspective: 1800px;
+  position: relative;
   background:
-    radial-gradient(ellipse at 50% 45%, rgba(245, 240, 232, 0.07), transparent 60%),
+    radial-gradient(ellipse at 50% 42%, rgba(245, 240, 232, 0.08), transparent 62%),
     var(--black);
+}
+
+.book-floor-shadow {
+  position: absolute;
+  top: calc(50% + var(--h) * 0.42);
+  left: 50%;
+  width: calc(var(--w) * 1.3);
+  height: 50px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.9), transparent 70%);
+  filter: blur(6px);
+  pointer-events: none;
 }
 
 .intro-book {
@@ -28,72 +47,303 @@
   width: var(--w);
   height: var(--h);
   transform-style: preserve-3d;
-  transform: rotateX(14deg) rotateY(-18deg) rotateZ(2deg);
+  transform: translateX(0) rotateX(4deg) rotateY(24deg);
   transition: transform var(--turn);
+  animation: book-arrive 2.6s cubic-bezier(0.45, 0, 0.2, 1) backwards;
 }
 
 .intro-book.stage-closed:hover {
-  transform: rotateX(10deg) rotateY(-24deg) rotateZ(1deg) translateZ(30px);
+  transform: translateX(0) rotateX(2deg) rotateY(14deg);
 }
 
-.intro-book:not(.stage-closed) {
-  transform: translateX(calc(var(--w) / 2)) rotateX(10deg);
+.intro-book.stage-back {
+  transform: translateX(0) rotateX(4deg) rotateY(156deg);
 }
 
-/* ---- PAPER ---- */
+.intro-book.stage-acknowledgements,
+.intro-book.stage-contents {
+  transform: translateX(calc(var(--w) / 2)) rotateX(10deg) rotateY(0deg);
+}
+
+/* arrives showing its back, then spins round to the front
+   (no opacity here: anything below 1 flattens the 3D) */
+@keyframes book-arrive {
+  0%, 30% { transform: translateX(0) rotateX(4deg) rotateY(156deg); }
+  100% { transform: translateX(0) rotateX(4deg) rotateY(24deg); }
+}
+
+/* ---- BOOK BODY: back cover, spine, page edges ---- */
+.book-back-cover,
+.book-spine,
+.book-edge,
+.intro-cover {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.book-back-cover {
+  position: absolute;
+  inset: 0;
+  padding: calc(var(--w) * 0.06) calc(var(--w) * 0.06) calc(var(--w) * 0.05) calc(var(--w) * 0.08);
+  transform: translateZ(calc(var(--d) / -2)) rotateY(180deg);
+  border-radius: 10px 3px 3px 10px;
+  background: var(--leather);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06), inset -10px 0 14px -10px rgba(0, 0, 0, 0.8);
+  color: var(--white);
+  font-family: 'Patrick Hand', cursive;
+  font-size: calc(var(--w) * 0.036);
+  line-height: 1.3;
+  display: flex;
+  flex-direction: column;
+}
+
+.stage-back .book-back-cover { cursor: pointer; }
+
+.back-panel {
+  align-self: flex-end;
+  flex-shrink: 0;
+  position: relative;
+  width: 46%;
+  height: calc(var(--h) * 0.27);
+  margin: 0 0 8px 10px;
+  background:
+    repeating-linear-gradient(transparent 0 11px, var(--rule) 11px 12px),
+    var(--paper);
+  transform: rotate(2deg);
+  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.4);
+}
+
+.back-panel::before,
+.back-panel::after,
+.cover-panel::before,
+.cover-panel::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  width: 42px;
+  height: 16px;
+  background: rgba(225, 220, 200, 0.75);
+}
+
+.back-panel::before, .cover-panel::before { left: -12px; transform: rotate(-32deg); }
+.back-panel::after, .cover-panel::after { right: -12px; transform: rotate(30deg); }
+
+.back-panel img {
+  position: absolute;
+  left: 8%;
+  bottom: 4px;
+  height: 92%;
+  mix-blend-mode: multiply;
+}
+
+.back-sign {
+  position: absolute;
+  right: 6px;
+  bottom: 10px;
+  padding: 2px 5px;
+  border: 1.5px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 0.75em;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.back-blurb p + p { margin-top: 0.7em; }
+
+.back-series {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.back-series a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  aspect-ratio: 0.72;
+  padding: 4px 2px;
+  border-radius: 1px 3px 3px 1px;
+  background: hsl(var(--hue) 45% 38%);
+  box-shadow: inset 2px 0 0 rgba(0, 0, 0, 0.3), 1px 2px 0 rgba(0, 0, 0, 0.5);
+  color: var(--white);
+  text-decoration: none;
+  text-align: center;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.back-series a:hover { transform: translateY(-3px); }
+
+.mini-diary { font-family: 'Luckiest Guy', cursive; font-size: 0.55em; letter-spacing: 1px; }
+.mini-title { font-size: 0.5em; line-height: 1.1; }
+
+.back-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 10px;
+}
+
+.back-quote { display: flex; flex-direction: column; }
+.back-quote strong { font-family: 'Luckiest Guy', cursive; font-weight: 400; font-size: 1.15em; letter-spacing: 0.5px; }
+.back-quote span { font-style: italic; opacity: 0.85; }
+.back-quote .back-url { margin-top: 6px; font-style: normal; color: var(--green); font-size: 0.85em; }
+
+.back-barcode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 6px;
+  background: #fff;
+  color: #111;
+  font-family: monospace;
+  font-size: 0.55em;
+}
+
+.back-barcode .bars {
+  width: calc(var(--w) * 0.26);
+  height: calc(var(--w) * 0.08);
+  background: repeating-linear-gradient(90deg, #111 0 1px, #fff 1px 2px, #111 2px 4px, #fff 4px 5px, #111 5px 6px, #fff 6px 8px, #111 8px 9px, #fff 9px 11px);
+}
+
+.book-spine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--d);
+  height: 100%;
+  transform-origin: left center;
+  transform: translateZ(calc(var(--d) / -2)) rotateY(-90deg);
+  background: var(--leather);
+  border-left: 2px dashed rgba(245, 240, 232, 0.35);
+  border-right: 2px dashed rgba(245, 240, 232, 0.35);
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0 10px;
+  color: var(--white);
+  overflow: hidden;
+}
+
+.spine-title {
+  writing-mode: vertical-rl;
+  font-family: 'Luckiest Guy', cursive;
+  font-size: calc(var(--d) * 0.42);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.spine-title small { font-family: 'Caveat', cursive; font-size: 0.8em; }
+.spine-title b { font-weight: 400; color: var(--green); }
+
+.spine-author {
+  writing-mode: vertical-rl;
+  font-family: 'Caveat', cursive;
+  font-size: calc(var(--d) * 0.45);
+  margin-top: auto;
+  margin-bottom: 10px;
+}
+
+.spine-logo {
+  width: calc(var(--d) * 0.6);
+  height: calc(var(--d) * 0.6);
+  display: grid;
+  place-items: center;
+  background: var(--green);
+  color: var(--black);
+  font-family: 'Luckiest Guy', cursive;
+  font-size: calc(var(--d) * 0.36);
+}
+
+.book-edge {
+  position: absolute;
+  background: repeating-linear-gradient(90deg, #efe8d6 0 1px, #cfc6ae 1px 2px);
+}
+
+.book-edge-right {
+  top: 4px;
+  left: calc(var(--w) - 4px);
+  width: calc(var(--d) - 6px);
+  height: calc(100% - 8px);
+  transform-origin: left center;
+  transform: translateZ(calc(var(--d) / 2 - 3px)) rotateY(90deg);
+  background: repeating-linear-gradient(90deg, #efe8d6 0 1px, #cfc6ae 1px 2px), #e6dfca;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.25);
+}
+
+.book-edge-bottom,
+.book-edge-top {
+  left: 2px;
+  width: calc(var(--w) - 6px);
+  height: calc(var(--d) - 6px);
+  transform-origin: top center;
+  background: repeating-linear-gradient(180deg, #efe8d6 0 1px, #cfc6ae 1px 2px);
+}
+
+.book-edge-bottom {
+  top: calc(100% - 4px);
+  transform: translateZ(calc(var(--d) / 2 - 3px)) rotateX(-90deg);
+}
+
+.book-edge-top {
+  top: 4px;
+  transform: translateZ(calc(var(--d) / -2 + 3px)) rotateX(90deg);
+}
+
+/* ---- PAPER (Wimpy-style diary pages) ---- */
 .intro-page {
   position: absolute;
   inset: 0;
-  padding: calc(var(--w) * 0.12) 22px 40px 58px;
+  padding: 0 22px 32px;
   color: var(--ink);
   font-family: 'Patrick Hand', cursive;
-  font-size: 16px;
+  font-size: 17px;
   line-height: 24px;
   border-radius: 2px 6px 6px 2px;
   background:
-    linear-gradient(90deg, transparent 44px, var(--margin) 44px, var(--margin) 46px, transparent 46px),
+    linear-gradient(var(--paper) 0 48px, transparent 48px),
     repeating-linear-gradient(transparent 0 23px, var(--rule) 23px 24px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.1), transparent 9%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.12), transparent 8%),
     var(--paper);
-  background-position: 0 0, 0 calc(var(--w) * 0.12 - 4px), 0 0, 0 0;
 }
 
-/* the stack of pages under everything gives the book its thickness */
 .intro-page-contents {
-  transform: translateZ(0);
-  box-shadow:
-    1px 1px 0 #ece5d2,
-    2px 2px 0 #d8d0ba,
-    3px 3px 0 #ece5d2,
-    4px 4px 0 #d8d0ba,
-    5px 5px 0 #ece5d2,
-    6px 6px 0 #cfc6ad,
-    7px 7px 0 #e6dfca,
-    8px 8px 0 #bfb59a,
-    18px 26px 40px rgba(0, 0, 0, 0.6);
+  transform: translateZ(calc(var(--d) / 2 - 3px));
 }
 
-.intro-page-title {
-  font-family: 'Caveat', cursive;
-  font-size: 34px;
-  line-height: 48px;
-  font-weight: 700;
-  margin: -12px 0 12px;
+.diary-month {
+  height: 48px;
+  line-height: 56px;
+  text-align: center;
+  font-family: 'Patrick Hand', cursive;
+  font-weight: 400;
+  font-size: 21px;
+  letter-spacing: 1px;
 }
+
+.diary-day {
+  height: 24px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.diary-text p + p { margin-top: 24px; }
 
 .page-number {
   position: absolute;
-  bottom: 12px;
+  bottom: 6px;
   right: 22px;
-  font-family: 'Caveat', cursive;
-  font-size: 18px;
-  opacity: 0.6;
+  font-size: 15px;
 }
 
-.page-number.left {
-  right: auto;
-  left: 22px;
-}
+.page-number.left { right: auto; left: 22px; }
 
 /* ---- LEAVES (cover + acknowledgements) ---- */
 .intro-leaf {
@@ -104,14 +354,14 @@
   transition: transform var(--turn);
 }
 
-.intro-leaf-cover { transform: translateZ(3px); cursor: pointer; }
-.intro-leaf-ack { transform: translateZ(2px); }
+.intro-leaf-cover { transform: translateZ(calc(var(--d) / 2)); cursor: pointer; }
+.intro-leaf-ack { transform: translateZ(calc(var(--d) / 2 - 2px)); }
 .stage-acknowledgements .intro-leaf-ack { cursor: pointer; }
 
-.stage-closed:hover .intro-leaf-cover { transform: translateZ(3px) rotateY(-14deg); }
+.stage-closed:hover .intro-leaf-cover { transform: translateZ(calc(var(--d) / 2)) rotateY(-12deg); }
 .stage-acknowledgements .intro-leaf-cover,
-.stage-contents .intro-leaf-cover { transform: translateZ(1px) rotateY(-180deg); }
-.stage-contents .intro-leaf-ack { transform: translateZ(2px) rotateY(-180deg); }
+.stage-contents .intro-leaf-cover { transform: translateZ(calc(var(--d) / 2 - 4px)) rotateY(-180deg); }
+.stage-contents .intro-leaf-ack { transform: translateZ(calc(var(--d) / 2 - 2px)) rotateY(-180deg); }
 
 .leaf-face {
   position: absolute;
@@ -120,17 +370,15 @@
   -webkit-backface-visibility: hidden;
 }
 
-.leaf-back {
-  transform: rotateY(180deg);
-}
+.leaf-back { transform: rotateY(180deg); }
 
 .leaf-back.intro-page {
-  background:
-    repeating-linear-gradient(transparent 0 23px, var(--rule) 23px 24px),
-    linear-gradient(270deg, rgba(0, 0, 0, 0.12), transparent 9%),
-    var(--paper);
-  background-position: 0 calc(var(--w) * 0.12 - 4px), 0 0, 0 0;
   border-radius: 6px 2px 2px 6px;
+  background:
+    linear-gradient(var(--paper) 0 48px, transparent 48px),
+    repeating-linear-gradient(transparent 0 23px, var(--rule) 23px 24px),
+    linear-gradient(270deg, rgba(0, 0, 0, 0.12), transparent 8%),
+    var(--paper);
 }
 
 /* a shadow sweeps over the page while it turns */
@@ -144,113 +392,117 @@
   opacity: 0;
 }
 
-.stage-contents .intro-leaf-ack .leaf-front::after {
-  animation: page-shade 1.1s ease-in forwards;
-}
-
-.stage-contents .intro-leaf-ack .leaf-back::after {
-  animation: page-shade-out 1.1s ease-out forwards;
-}
+.stage-contents .intro-leaf-ack .leaf-front::after { animation: page-shade 1.1s ease-in forwards; }
+.stage-contents .intro-leaf-ack .leaf-back::after { animation: page-shade-out 1.1s ease-out forwards; }
 
 @keyframes page-shade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes page-shade-out { 0% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes page-shade-out { from { opacity: 1; } to { opacity: 0; } }
 
-/* ---- COVER ---- */
+/* ---- FRONT COVER ---- */
 .intro-cover {
   border-radius: 3px 10px 10px 3px;
   overflow: hidden;
-  background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.05) 5%, transparent 7%, rgba(255, 255, 255, 0.08) 8%, transparent 10%),
-    repeating-linear-gradient(115deg, rgba(90, 60, 20, 0.06) 0 2px, transparent 2px 6px),
-    radial-gradient(ellipse at 30% 20%, #d9b77f, #b98e52 70%, #a77c43);
+  background: var(--leather);
   box-shadow:
-    inset 0 0 0 1px rgba(60, 40, 10, 0.4),
-    inset -3px 0 6px rgba(0, 0, 0, 0.2),
-    16px 22px 40px rgba(0, 0, 0, 0.55);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    inset 10px 0 14px -10px rgba(0, 0, 0, 0.9),
+    inset 14px 0 0 -12px rgba(255, 255, 255, 0.08);
+  color: var(--white);
+  text-align: center;
 }
 
-.cover-label {
-  position: absolute;
-  top: 9%;
-  left: 13%;
-  right: 9%;
-  padding: 14px 12px 12px;
+.cover-heading {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  color: var(--ink);
-  background: var(--paper);
-  transform: rotate(-2.5deg);
-  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.18);
+  margin-top: calc(var(--w) * 0.05);
+  font-weight: 400;
+  line-height: 0.9;
 }
 
-.cover-label::before,
-.cover-label::after {
-  content: '';
-  position: absolute;
-  top: -10px;
-  width: 54px;
-  height: 20px;
-  background: rgba(235, 230, 210, 0.7);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+.cover-diary {
+  font-family: 'Luckiest Guy', cursive;
+  font-size: calc(var(--w) * 0.15);
+  letter-spacing: calc(var(--w) * 0.012);
+  color: var(--white);
 }
 
-.cover-label::before { left: -14px; transform: rotate(-30deg); }
-.cover-label::after { right: -14px; transform: rotate(28deg); }
-
-.cover-the {
+.cover-ofa {
   font-family: 'Caveat', cursive;
-  font-size: calc(var(--w) * 0.06);
-  line-height: 1;
+  font-weight: 700;
+  font-size: calc(var(--w) * 0.075);
+  margin: calc(var(--w) * -0.005) 0 calc(var(--w) * 0.01);
 }
 
 .cover-title {
+  font-family: 'Luckiest Guy', cursive;
+  font-size: calc(var(--w) * 0.125);
+  color: var(--green);
+  transform: rotate(-3deg);
+  text-shadow:
+    -2px -2px 0 #0a0a0a, 2px -2px 0 #0a0a0a, -2px 2px 0 #0a0a0a, 2px 2px 0 #0a0a0a,
+    3px 4px 0 rgba(0, 0, 0, 0.6);
+}
+
+.cover-subtitle {
+  display: block;
+  margin-top: calc(var(--w) * 0.03);
+  font-family: 'Luckiest Guy', cursive;
+  font-size: calc(var(--w) * 0.06);
+  letter-spacing: 1px;
+  color: var(--white);
+  text-shadow: 2px 2px 0 var(--green);
+}
+
+.cover-sticker {
+  position: absolute;
+  top: calc(var(--h) * 0.4);
+  right: calc(var(--w) * 0.04);
+  width: calc(var(--w) * 0.2);
+  height: calc(var(--w) * 0.2);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--green);
+  color: var(--black);
+  font-family: 'Luckiest Guy', cursive;
+  font-size: calc(var(--w) * 0.024);
+  line-height: 1.15;
+  transform: rotate(12deg);
+  box-shadow: 0 0 0 3px var(--black), 0 0 0 4px rgba(245, 240, 232, 0.4);
+  z-index: 2;
+}
+
+.cover-panel {
+  position: absolute;
+  left: 17%;
+  right: 17%;
+  top: calc(var(--h) * 0.47);
+  bottom: calc(var(--h) * 0.11);
+  background:
+    repeating-linear-gradient(transparent 0 13px, var(--rule) 13px 14px),
+    var(--paper);
+  box-shadow: 3px 4px 0 rgba(0, 0, 0, 0.5);
+  transform: rotate(-1.5deg);
+}
+
+.cover-panel img {
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  height: 94%;
+  transform: translateX(-50%);
+  mix-blend-mode: multiply;
+}
+
+.cover-author {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--h) * 0.025);
   font-family: 'Caveat', cursive;
   font-weight: 700;
-  font-size: calc(var(--w) * 0.12);
-  line-height: 0.95;
-}
-
-.cover-tagline {
-  margin-top: 6px;
-  font-size: calc(var(--w) * 0.042);
-  opacity: 0.7;
-}
-
-/* the drawing is white-on-black, so it goes on like a taped-in photo */
-.cover-character,
-.doodle-page img {
-  border: 5px solid var(--paper);
-  border-bottom-width: 18px;
-  background: #000;
-  box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.35);
-}
-
-.cover-character {
-  position: absolute;
-  left: 12%;
-  bottom: 13%;
-  height: 46%;
-  transform: rotate(-4deg);
-}
-
-.cover-scribble {
-  position: absolute;
-  right: 8%;
-  bottom: 9%;
-  font-family: 'Caveat', cursive;
-  font-weight: 700;
-  font-size: calc(var(--w) * 0.055);
-  line-height: 1;
-  text-align: center;
-  color: #8c1d18;
-  transform: rotate(-12deg);
-}
-
-.cover-scribble small {
-  font-weight: 400;
-  font-size: 0.7em;
+  font-size: calc(var(--w) * 0.075);
 }
 
 /* ---- INSIDE COVER ---- */
@@ -259,56 +511,67 @@
   flex-direction: column;
   justify-content: center;
   text-align: center;
-  padding: 24px;
+  background: var(--paper) !important;
 }
 
 .inside-property { font-size: 15px; opacity: 0.7; }
 .inside-name { font-family: 'Caveat', cursive; font-size: 40px; line-height: 48px; font-weight: 700; }
 .inside-address { opacity: 0.7; }
-.inside-warning {
-  margin-top: 48px;
-  font-family: 'Caveat', cursive;
-  font-size: 22px;
-  color: #8c1d18;
-  transform: rotate(-4deg);
-}
+.inside-warning { margin-top: 48px; font-family: 'Caveat', cursive; font-size: 22px; transform: rotate(-4deg); }
 
-/* ---- ACKNOWLEDGEMENTS ---- */
-.ack-body p + p { margin-top: 12px; }
-.ack-body em { color: #2c7a3a; font-style: normal; text-decoration: underline wavy; text-underline-offset: 3px; }
-.ack-sign { font-family: 'Caveat', cursive; font-size: 24px; text-align: right; margin-right: 8px; }
-
+/* ---- COMIC PANEL ---- */
 .turn-hint {
   position: absolute;
-  bottom: 12px;
-  left: 58px;
-  font-family: 'Caveat', cursive;
-  font-size: 18px;
+  bottom: 6px;
+  left: 22px;
+  font-size: 15px;
   color: #2c7a3a;
   animation: nudge 1.6s ease-in-out infinite;
 }
 
 @keyframes nudge { 50% { transform: translateX(6px); } }
 
-.doodle-page {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  text-align: center;
-  font-family: 'Caveat', cursive;
-  font-size: 20px;
-  padding: 0 12px;
+.comic-panel {
+  position: relative;
+  height: calc(var(--w) * 0.42);
+  margin-top: 12px;
 }
 
-.doodle-page img { height: 58%; transform: rotate(3deg); }
+.comic-panel img {
+  position: absolute;
+  left: 8%;
+  bottom: 0;
+  height: 100%;
+  mix-blend-mode: multiply;
+}
+
+.speech-bubble {
+  position: absolute;
+  top: 0;
+  right: 4%;
+  width: 52%;
+  padding: 10px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--paper);
+  font-size: 13px;
+  line-height: 16px;
+  text-align: center;
+}
+
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  left: 12%;
+  bottom: -14px;
+  width: 18px;
+  height: 18px;
+  border-left: 2px solid var(--ink);
+  transform: skewX(30deg);
+}
 
 /* ---- CONTENTS ---- */
-.contents-list {
-  list-style: none;
-}
+.contents-list { list-style: none; }
 
 .contents-list li {
   opacity: 0;
@@ -316,26 +579,21 @@
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-.stage-contents .contents-list li {
-  opacity: 1;
-  transform: none;
-}
+.stage-contents .contents-list li { opacity: 1; transform: none; }
 
 .contents-list a {
   display: flex;
   align-items: baseline;
   gap: 6px;
-  height: 36px;
-  padding-top: 6px;
+  height: 48px;
+  padding-top: 24px;
+  line-height: 24px;
   color: var(--ink);
   text-decoration: none;
-  font-size: 18px;
 }
 
-.contents-doodle { width: 22px; font-size: 14px; }
-
 .contents-title {
-  background-image: linear-gradient(#2c7a3a, #2c7a3a);
+  background-image: linear-gradient(var(--green), var(--green));
   background-size: 0 2px;
   background-position: 0 100%;
   background-repeat: no-repeat;
@@ -348,8 +606,6 @@
   transform: translateY(-4px);
 }
 
-.contents-num { font-family: 'Caveat', cursive; font-size: 20px; }
-
 .contents-list a:hover .contents-title,
 .contents-list a:focus-visible .contents-title {
   color: #2c7a3a;
@@ -357,30 +613,28 @@
 }
 
 .contents-secret {
-  display: inline-block;
-  margin-top: 18px;
-  font-family: 'Caveat', cursive;
-  font-size: 19px;
-  color: #8c1d18;
+  display: block;
+  color: var(--ink);
   text-decoration: none;
   opacity: 0;
-  transform: rotate(-3deg);
   transition: opacity 0.4s ease 1.5s;
 }
 
-.stage-contents .contents-secret { opacity: 1; }
+.contents-secret:hover { text-decoration: underline; }
+.stage-contents .contents-secret { opacity: 0.75; }
 
-/* ---- HINTS ---- */
+/* ---- CONTROLS ---- */
 .intro-hint {
   font-family: 'Caveat', cursive;
   font-size: 20px;
   color: var(--gray);
+  margin-top: calc(var(--h) * 0.04);
 }
 
+.intro-actions { min-height: 28px; }
+
+.intro-actions button,
 .intro-skip {
-  position: fixed;
-  top: 18px;
-  right: 22px;
   background: none;
   border: none;
   color: var(--gray);
@@ -389,20 +643,30 @@
   cursor: pointer;
 }
 
+.intro-skip {
+  position: fixed;
+  top: 18px;
+  right: 22px;
+}
+
+.intro-actions button:hover,
 .intro-skip:hover { color: var(--white); }
 
 .intro-leaf:focus-visible,
+.intro-actions button:focus-visible,
 .intro-skip:focus-visible,
 .contents-list a:focus-visible,
+.back-series a:focus-visible,
 .contents-secret:focus-visible {
-  outline: 2px dashed #2c7a3a;
+  outline: 2px dashed var(--green);
   outline-offset: 4px;
 }
 
 /* ---- PHONES: one page at a time ---- */
 @media (max-width: 760px) {
-  .intro-book:not(.stage-closed) {
-    transform: rotateX(6deg);
+  .intro-book.stage-acknowledgements,
+  .intro-book.stage-contents {
+    transform: translateX(0) rotateX(6deg) rotateY(0deg);
   }
 
   .stage-acknowledgements .intro-leaf-cover,
@@ -411,6 +675,8 @@
     opacity: 0;
     transition: transform var(--turn), opacity 0.3s ease 0.8s;
   }
+
+  .intro-page { font-size: 16px; padding: 0 16px 32px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -419,6 +685,7 @@
   .contents-list li,
   .contents-secret {
     transition: none !important;
+    animation: none !important;
   }
 
   .turn-hint,
