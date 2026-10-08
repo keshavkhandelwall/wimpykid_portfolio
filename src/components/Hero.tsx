@@ -2,6 +2,7 @@ import '../hero-badges.css';
 import { Link } from 'react-router-dom';
 import { portfolio } from '../data/portfolio';
 import KeshavDoodle from './KeshavDoodle';
+import KeshavHop from './KeshavHop';
 
 export default function Hero() {
   return (
@@ -43,6 +44,8 @@ export default function Hero() {
       <div className="hero-keshav">
         <KeshavDoodle />
       </div>
+
+      <KeshavHop caption="Deadlines? I just jump over them." word="deadline" />
 
       <div className="scroll-hint" style={{ marginTop: '40px', position: 'relative', bottom: 'auto' }}>
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">

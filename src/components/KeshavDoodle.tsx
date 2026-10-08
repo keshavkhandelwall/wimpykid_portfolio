@@ -1,23 +1,32 @@
-import { useEffect, useRef, useState } from 'react';
-import type { PointerEvent as ReactPointerEvent } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import KeshavRig from './KeshavRig';
+import type { Pose } from './KeshavRig';
 import './KeshavDoodle.css';
 
-// the drawing is cut into a body and a head layer (652 × 1336), so the head can turn on its own
-const W = 652;
-const H = 1336;
-const NECK = { x: 320, y: 278 };
-const EYES = [
-  { x: 287.5, y: 187.5 },
-  { x: 359.5, y: 178.5 },
+// the name of the window event other parts of the page use to make him react,
+// e.g. window.dispatchEvent(new CustomEvent(KESHAV_EVENT, { detail: 'shocked' }))
+export const KESHAV_EVENT = 'keshav';
+
+// how long each one-shot pose lasts before he goes back to idle
+const DURATION: Partial<Record<Pose, number>> = { jump: 800, shocked: 1200, wave: 1900 };
+
+const SLEEP_AFTER = 20000;
+
+// each poke does something different, with its own line
+const POKES: { pose: Pose; line: string }[] = [
+  { pose: 'shocked', line: 'Hey! I said don’t touch anything!' },
+  { pose: 'jump', line: 'Okay, one more poke. Then I’m calling Mom.' },
+  { pose: 'wave', line: 'Fine. You can scroll now. Bye!' },
+  { pose: 'jump', line: 'Every bug here was fixed by me. Mostly.' },
+  { pose: 'shocked', line: 'Stop! I just fixed my hair.' },
 ];
 
-const LINES = [
-  'Hey! I said don’t touch anything!',
-  'Okay, one more poke. Then I’m calling Mom.',
-  'Fine. You can scroll now.',
-  'Every bug here was fixed by me. Mostly.',
-  'Stop! I just fixed my hair.',
-];
+const REACTIONS: Partial<Record<Pose, string>> = {
+  shocked: 'Whoa! Was that a bug?!',
+  wave: 'Hi! Write to me!',
+  jump: 'Wheee!',
+  sleep: 'zzz…',
+};
 
 interface Props {
   // first thing the speech bubble says
@@ -27,9 +36,45 @@ interface Props {
 
 export default function KeshavDoodle({ greeting = 'Welcome to my diary. Don’t touch anything!', className = '' }: Props) {
   const [look, setLook] = useState({ x: 0, y: 0 });
-  const [pokes, setPokes] = useState(0);
-  const [hopping, setHopping] = useState(false);
+  const [pose, setPose] = useState<Pose>('idle');
+  const [line, setLine] = useState(greeting);
+  const [said, setSaid] = useState(0);
+  const pokes = useRef(0);
   const root = useRef<HTMLDivElement>(null);
+  const reset = useRef(0);
+  const sleepTimer = useRef(0);
+
+  const say = useCallback((text: string) => {
+    setLine(text);
+    setSaid((n) => n + 1);
+  }, []);
+
+  const play = useCallback((next: Pose, text?: string) => {
+    window.clearTimeout(reset.current);
+    setPose(next);
+    if (text) say(text);
+    const ms = DURATION[next];
+    if (ms) reset.current = window.setTimeout(() => setPose('idle'), ms);
+  }, [say]);
+
+  // falls asleep after a while without any activity, wakes on the next one
+  useEffect(() => {
+    const arm = () => {
+      window.clearTimeout(sleepTimer.current);
+      sleepTimer.current = window.setTimeout(() => play('sleep', REACTIONS.sleep), SLEEP_AFTER);
+    };
+    const onActivity = () => {
+      setPose((p) => (p === 'sleep' ? 'idle' : p));
+      arm();
+    };
+    arm();
+    const events = ['pointermove', 'pointerdown', 'scroll', 'keydown', 'wheel', 'touchstart'] as const;
+    events.forEach((e) => window.addEventListener(e, onActivity, { passive: true }));
+    return () => {
+      window.clearTimeout(sleepTimer.current);
+      events.forEach((e) => window.removeEventListener(e, onActivity));
+    };
+  }, [play]);
 
   // the head turns a little towards the pointer, wherever it is on the page
   useEffect(() => {
@@ -44,45 +89,30 @@ export default function KeshavDoodle({ greeting = 'Welcome to my diary. Don’t 
     return () => window.removeEventListener('pointermove', onMove);
   }, []);
 
-  const poke = (e: ReactPointerEvent) => {
-    e.preventDefault();
-    setPokes((n) => n + 1);
-    setHopping(false);
-    requestAnimationFrame(() => setHopping(true));
-  };
+  // anything on the page can make him react
+  useEffect(() => {
+    const onReact = (e: Event) => {
+      const next = (e as CustomEvent<Pose>).detail;
+      if (next) play(next, REACTIONS[next]);
+    };
+    window.addEventListener(KESHAV_EVENT, onReact);
+    return () => {
+      window.clearTimeout(reset.current);
+      window.removeEventListener(KESHAV_EVENT, onReact);
+    };
+  }, [play]);
 
-  const line = pokes === 0 ? greeting : LINES[(pokes - 1) % LINES.length];
+  const poke = () => {
+    const next = POKES[pokes.current % POKES.length];
+    pokes.current += 1;
+    play(next.pose, next.line);
+  };
 
   return (
     <div ref={root} className={`keshav-doodle ${className}`}>
-      <p className="keshav-bubble" key={pokes} aria-live="polite">{line}</p>
-      <button
-        type="button"
-        className={`keshav-figure${hopping ? ' hop' : ''}`}
-        onPointerDown={poke}
-        onAnimationEnd={(e) => e.animationName === 'keshav-hop' && setHopping(false)}
-        aria-label="Poke Keshav"
-        style={{ aspectRatio: `${W} / ${H}` }}
-      >
-        <img className="keshav-body" src="/doodles/keshav-body.webp" alt="" draggable={false} />
-        <span
-          className="keshav-head"
-          style={{
-            transformOrigin: `${(NECK.x / W) * 100}% ${(NECK.y / H) * 100}%`,
-            transform: `rotate(${look.x * 6}deg) translateY(${look.y * 4}px)`,
-          }}
-        >
-          <img src="/doodles/keshav-head.webp" alt="" draggable={false} />
-          {/* eyelids that close for a blink */}
-          <svg className="keshav-lids" viewBox={`0 0 ${W} ${H}`} aria-hidden="true">
-            {EYES.map((eye) => (
-              <g key={eye.x} transform={`translate(${eye.x} ${eye.y})`}>
-                <ellipse rx="13" ry="16" />
-                <path d="M-12 2 Q0 8 12 2" />
-              </g>
-            ))}
-          </svg>
-        </span>
+      <p className="keshav-bubble" key={said} aria-live="polite">{line}</p>
+      <button type="button" className="keshav-figure" onPointerDown={(e) => { e.preventDefault(); poke(); }} aria-label="Poke Keshav">
+        <KeshavRig pose={pose} look={look} />
       </button>
     </div>
   );
