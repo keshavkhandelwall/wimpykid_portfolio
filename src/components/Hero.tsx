@@ -1,6 +1,7 @@
 import '../hero-badges.css';
 import { Link } from 'react-router-dom';
 import { portfolio } from '../data/portfolio';
+import KeshavDoodle from './KeshavDoodle';
 
 export default function Hero() {
   return (
@@ -39,61 +40,8 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="showcase-container">
-        <div className="showcase-wrapper">
-
-          {/* torn-paper grid panel — flush on the left, jagged torn edge on the right */}
-          <div className="hero-grid-capsule">
-            <img
-              src="/keshavwimpy.png"
-              className="showcase-character"
-              alt={`${portfolio.name}'s illustrated character`}
-            />
-
-            {/* Badge 1: Protagonist bottle cap */}
-            <img
-              src="/badges/protagonist-bottlecap.svg"
-              className="sticker-img sticker-bottlecap"
-              alt={`Protagonist since 2005 — ${portfolio.name}`}
-              title="My Design Philosophy"
-            />
-
-            {/* Badge 2: Jaipur postcard */}
-            <img
-              src="/badges/jaipur-postcard.svg"
-              className="sticker-img sticker-postcard"
-              alt={`Greetings from ${portfolio.location}`}
-              title="Where I'm from"
-            />
-
-            {/* Badge 3: Certified Fresh Developer */}
-            <img
-              src="/badges/certified-fresh-dev.svg"
-              className="sticker-img sticker-rating"
-              alt="92% Certified Fresh Developer"
-              title="Quality Assurance"
-            />
-
-            {/* Badge 4: Learner stamp */}
-            <img
-              src="/badges/learner-stamp.svg"
-              className="sticker-img sticker-stamp"
-              alt="Learner postage stamp"
-              title="Always Learning"
-            />
-          </div>
-
-          {/* duct tape strips pinning the page's top corners down —
-              kept OUTSIDE .hero-grid-capsule so the clip-path torn shape doesn't cut them off */}
-          <span className="badge-tape badge-tape-corner-tl" aria-hidden="true" />
-          <span className="badge-tape badge-tape-corner-tr" aria-hidden="true" />
-
-          {/* left side duct tape strips pinning the left edge of the page down */}
-          <span className="page-tape-side page-tape-side-top" aria-hidden="true" />
-          <span className="page-tape-side page-tape-side-mid" aria-hidden="true" />
-          <span className="page-tape-side page-tape-side-bottom" aria-hidden="true" />
-
-        </div>
+      <div className="hero-keshav">
+        <KeshavDoodle />
       </div>
 
       <div className="scroll-hint" style={{ marginTop: '40px', position: 'relative', bottom: 'auto' }}>

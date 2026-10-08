@@ -1,0 +1,103 @@
+/* ---- KESHAV, ANIMATED ---- */
+.keshav-doodle {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(280px, 70vw);
+}
+
+.keshav-bubble {
+  position: relative;
+  max-width: 230px;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  border: 2.5px solid #1d1d1d;
+  border-radius: 50% 46% 48% 52% / 58% 54% 46% 42%;
+  background: #fff;
+  color: #1d1d1d;
+  font-family: 'Gochi Hand', cursive;
+  font-size: 17px;
+  line-height: 1.25;
+  text-align: center;
+  text-transform: uppercase;
+  z-index: 2;
+  animation: keshav-say 0.35s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+}
+
+.keshav-bubble::after {
+  content: '';
+  position: absolute;
+  left: 52%;
+  bottom: -14px;
+  width: 16px;
+  height: 16px;
+  border-right: 2.5px solid #1d1d1d;
+  border-bottom: 2.5px solid #1d1d1d;
+  background: #fff;
+  transform: skewX(-25deg) rotate(30deg);
+}
+
+@keyframes keshav-say {
+  from { transform: scale(0.6) rotate(-4deg); opacity: 0; }
+}
+
+.keshav-figure {
+  position: relative;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transform-origin: 50% 100%;
+  animation: keshav-breathe 3.2s ease-in-out infinite;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.keshav-figure img,
+.keshav-head,
+.keshav-lids {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+}
+
+.keshav-figure .keshav-body { position: static; display: block; }
+
+.keshav-head { transition: transform 0.25s ease-out; }
+
+.keshav-figure.hop {
+  animation: keshav-hop 0.55s cubic-bezier(0.3, 0, 0.3, 1);
+}
+
+@keyframes keshav-breathe {
+  50% { transform: scaleY(1.012) rotate(0.6deg); }
+}
+
+@keyframes keshav-hop {
+  0% { transform: scale(1, 1); }
+  20% { transform: scale(1.06, 0.92); }
+  50% { transform: translateY(-16%) scale(0.96, 1.05) rotate(-3deg); }
+  80% { transform: scale(1.04, 0.95); }
+  100% { transform: scale(1, 1); }
+}
+
+/* blink: the lids show for a moment every few seconds */
+.keshav-lids g { opacity: 0; animation: keshav-blink 4.2s infinite; }
+.keshav-lids ellipse { fill: #fff; }
+.keshav-lids path { fill: none; stroke: #111; stroke-width: 3.5; stroke-linecap: round; }
+
+@keyframes keshav-blink {
+  0%, 93%, 100% { opacity: 0; }
+  95%, 97% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .keshav-figure,
+  .keshav-lids g,
+  .keshav-bubble {
+    animation: none;
+  }
+}
